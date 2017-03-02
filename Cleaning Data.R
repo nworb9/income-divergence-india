@@ -20,43 +20,69 @@ df.alpha$Km.Highways[105] ##  3533
 
 df.alpha <- subset(df.alpha, State != "All.India" & Year <= 2011 & Year > 1990)
 
-##  Linearly Interpolate NAs
+names <- c("Andhra.Pradesh", "Assam", "Bihar", "Gujarat", "Haryana", "Karnataka",
+           "Kerala", "Madhya.Pradesh", "Maharashtra", "Odisha", "Punjab", "Rajasthan",
+           "Tamil.Nadu", "Uttar.Pradesh", "West.Bengal")
 
-time_interpolate <- function(data_frame,
-                             GroupingVariable,
-                             time_var,
-                             output_times) {
-        input_times <- data_frame[, time_var]
-        exclude_vars <- c(time_var, GroupingVariable)
-        value_vars <- setdiff(colnames(data_frame), exclude_vars)
-        output_df <- data.frame(rep(data_frame[1,GroupingVariable], length(output_times)), output_times)
-        colnames(output_df) <- c(GroupingVariable, time_var)
-        for (value_var in value_vars) {
-                output_df[,value_var] <- approx(input_times, data_frame[, value_var], output_times)$y
-        }
-        return(output_df)
-}
+##  Interpolate values
 
-time_interpolate(df.alpha, "State" , "Year", seq(from=1991, to=2011, by=1))
+colnames(df.alpha)[unlist(lapply(df.alpha, function(x) anyNA(x)))]
 
-TimeInterpolateByGroup <- function(DataFrame, 
-                                   GroupingVariable, 
-                                   TimeVariable,
-                                   TimeInterval){
-        min_time <- min(DataFrame[, TimeVariable])
-        max_time <- max(DataFrame[, TimeVariable])
-        output_times <- seq(from=min_time, to=max_time, by=TimeInterval)
-        ddply(DataFrame,
-              GroupingVariable,
-              time_interpolate,
-              GroupingVariable=GroupingVariable,
-              time_var=TimeVariable,
-              output_times=output_times)
-}
+df.alpha <- df.alpha %>%
+        group_by(State) %>% 
+        arrange(State, Year) %>%
+        mutate(Population = approx(Year, Population, Year, 
+                                   method = "linear", rule = 1, f = 0, ties = mean)$y)
 
-TimeInterpolateByGroup(df.alpha, "State", "Year", 1)
+df.alpha <- df.alpha %>%
+        group_by(State) %>% 
+        arrange(State, Year) %>%
+        mutate(Water.Access = approx(Year, Water.Access, Year, 
+                                   method = "linear", rule = 1, f = 0, ties = mean)$y)
 
-df.alpha$Year <- as.integer(df.alpha$Year)
+df.alpha <- df.alpha %>%
+        group_by(State) %>% 
+        arrange(State, Year) %>%
+        mutate(Corruption.Convictions = approx(Year, Corruption.Convictions, Year, 
+                                     method = "linear", rule = 1, f = 0, ties = mean)$y)
+
+df.alpha <- df.alpha %>%
+        group_by(State) %>% 
+        arrange(State, Year) %>%
+        mutate(HDI = approx(Year, HDI, Year, 
+                                     method = "linear", rule = 1, f = 0, ties = mean)$y)
+
+df.alpha <- df.alpha %>%
+        group_by(State) %>% 
+        arrange(State, Year) %>%
+        mutate(Infant.Mortality.Rate = approx(Year, Infant.Mortality.Rate, Year, 
+                                     method = "linear", rule = 1, f = 0, ties = mean)$y)
+
+df.alpha <- df.alpha %>%
+        group_by(State) %>% 
+        arrange(State, Year) %>%
+        mutate(Literacy.Rate = approx(Year, Literacy.Rate, Year, 
+                                     method = "linear", rule = 1, f = 0, ties = mean)$y)
+
+df.alpha <- df.alpha %>%
+        group_by(State) %>% 
+        arrange(State, Year) %>%
+        filter(sum(!is.na(Percentage.BPL))>=2) %>% #filter!
+        mutate(Percentage.BPL = approx(Year, Percentage.BPL, Year, 
+                                     method = "linear", rule = 1, f = 0, ties = mean)$y)
+
+df.alpha <- df.alpha %>%
+        group_by(State) %>% 
+        arrange(State, Year) %>%
+        mutate(Total.Registered.Vehicles = approx(Year, Total.Registered.Vehicles, Year, 
+                                     method = "linear", rule = 1, f = 0, ties = mean)$y)
+
+df.alpha <- df.alpha %>%
+        group_by(State) %>% 
+        arrange(State, Year) %>%
+        mutate(Share.Rural.Pop = approx(Year, Share.Rural.Pop, Year, 
+                                     method = "linear", rule = 1, f = 0, ties = mean)$y)
+
 
 ##  Subset alpha frame
 
@@ -76,7 +102,7 @@ df.Tamil <- subset(df.alpha, State == "Tamil.Nadu")
 df.UP <- subset(df.alpha, State == "Uttar.Pradesh")
 df.WBengal <- subset(df.alpha, State == "West.Bengal")
 
-##  New interpretable variables  ##
+##  [New interpretable variables]  ##
 
 ##  Coerce into panel data frame
 
