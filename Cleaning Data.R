@@ -104,11 +104,6 @@ df.WBengal <- subset(df.alpha, State == "West.Bengal")
 
 ##  [New interpretable variables]  ##
 
-##  Coerce into panel data frame
-
-df.alpha <- pdata.frame(df.alpha, index = c("State", "Year"))
-df.alpha$Year <- as.numeric(df.alpha$Year)
-
 ##  GSDP
 
 df.alpha$GSDP.per.capita <- df.alpha$GSDP.Base.1980/df.alpha$Population
@@ -173,8 +168,12 @@ df.alpha$Gross.Fiscal.Deficit <- df.alpha$Gross.Fiscal.Deficit/df.alpha$GSDP.Bas
 
 df.alpha$Log.GSDP <- log(df.alpha$GSDP.per.capita)
 
+##  Coerce into panel data frame
+
+df.alpha <- pdata.frame(df.alpha, index = c("State", "Year"), row.names = F)
+df.alpha$Year <- as.numeric(df.alpha$Year)
+
 ##  Growth
 
-library(plm)
 df.alpha$GSDP.Growth <- diff(df.alpha$Log.GSDP, lag = 1)
 

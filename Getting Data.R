@@ -89,7 +89,7 @@ ggplot(data = df.alpha, aes(x = Year, y = Gross.Fixed.Capital.Formation, color =
 ggplot(data = df.alpha, aes(x = Year, y = Km.Highways, color = State), na.omit = T) +
         xlim(1991, 2015) +
         geom_line(size = 1) +
-        geom_point(size = 1.5) ##  Serious outlier for Bihar
+        geom_point(size = 1.5) ##  Critical outlier for Bihar
 
 ggplot(data = df.alpha, aes(x = Year, y = Infant.Mortality.Rate, color = State), na.omit = T) +
         xlim(1991, 2015) +
