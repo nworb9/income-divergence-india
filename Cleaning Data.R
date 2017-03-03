@@ -16,13 +16,17 @@ df.alpha$Km.Highways[105] ##  35339 reported, clearly an error
 df.alpha$Km.Highways[105] <- 3533
 df.alpha$Km.Highways[105] ##  3533
 
+
+##  Assam's Percentage.BPL values are missing
+
+df.alpha$Percentage.BPL[69] <- 40.86
+df.alpha$Percentage.BPL[75] <- 36.09
+df.alpha$Percentage.BPL[80] <- 34.04
+df.alpha$Percentage.BPL[85] <- 37.90
+
 ##  Select time period
 
 df.alpha <- subset(df.alpha, State != "All.India" & Year <= 2011 & Year > 1990)
-
-names <- c("Andhra.Pradesh", "Assam", "Bihar", "Gujarat", "Haryana", "Karnataka",
-           "Kerala", "Madhya.Pradesh", "Maharashtra", "Odisha", "Punjab", "Rajasthan",
-           "Tamil.Nadu", "Uttar.Pradesh", "West.Bengal")
 
 ##  Interpolate values
 
@@ -31,36 +35,42 @@ colnames(df.alpha)[unlist(lapply(df.alpha, function(x) anyNA(x)))]
 df.alpha <- df.alpha %>%
         group_by(State) %>% 
         arrange(State, Year) %>%
+        filter(sum(!is.na(Population))>=2) %>% #filter!
         mutate(Population = approx(Year, Population, Year, 
                                    method = "linear", rule = 1, f = 0, ties = mean)$y)
 
 df.alpha <- df.alpha %>%
         group_by(State) %>% 
         arrange(State, Year) %>%
+        filter(sum(!is.na(Water.Access))>=2) %>% #filter!
         mutate(Water.Access = approx(Year, Water.Access, Year, 
                                    method = "linear", rule = 1, f = 0, ties = mean)$y)
 
 df.alpha <- df.alpha %>%
         group_by(State) %>% 
         arrange(State, Year) %>%
+        filter(sum(!is.na(Corruption.Convictions))>=2) %>% #filter!
         mutate(Corruption.Convictions = approx(Year, Corruption.Convictions, Year, 
                                      method = "linear", rule = 1, f = 0, ties = mean)$y)
 
 df.alpha <- df.alpha %>%
         group_by(State) %>% 
         arrange(State, Year) %>%
+        filter(sum(!is.na(HDI))>=2) %>% #filter!
         mutate(HDI = approx(Year, HDI, Year, 
                                      method = "linear", rule = 1, f = 0, ties = mean)$y)
 
 df.alpha <- df.alpha %>%
         group_by(State) %>% 
         arrange(State, Year) %>%
+        filter(sum(!is.na(Infant.Mortality.Rate))>=2) %>% #filter!
         mutate(Infant.Mortality.Rate = approx(Year, Infant.Mortality.Rate, Year, 
                                      method = "linear", rule = 1, f = 0, ties = mean)$y)
 
 df.alpha <- df.alpha %>%
         group_by(State) %>% 
         arrange(State, Year) %>%
+        filter(sum(!is.na(Literacy.Rate))>=2) %>% #filter!
         mutate(Literacy.Rate = approx(Year, Literacy.Rate, Year, 
                                      method = "linear", rule = 1, f = 0, ties = mean)$y)
 
@@ -74,12 +84,14 @@ df.alpha <- df.alpha %>%
 df.alpha <- df.alpha %>%
         group_by(State) %>% 
         arrange(State, Year) %>%
+        filter(sum(!is.na(Total.Registered.Vehicles))>=2) %>% #filter!
         mutate(Total.Registered.Vehicles = approx(Year, Total.Registered.Vehicles, Year, 
                                      method = "linear", rule = 1, f = 0, ties = mean)$y)
 
 df.alpha <- df.alpha %>%
         group_by(State) %>% 
         arrange(State, Year) %>%
+        filter(sum(!is.na(Share.Rural.Pop))>=2) %>% #filter!
         mutate(Share.Rural.Pop = approx(Year, Share.Rural.Pop, Year, 
                                      method = "linear", rule = 1, f = 0, ties = mean)$y)
 
@@ -104,7 +116,7 @@ df.WBengal <- subset(df.alpha, State == "West.Bengal")
 
 ##  [New interpretable variables]  ##
 
-##  GSDP
+##  GSDP.per.capita
 
 df.alpha$GSDP.per.capita <- df.alpha$GSDP.Base.1980/df.alpha$Population
 
@@ -166,7 +178,20 @@ df.alpha$Gross.Fiscal.Deficit <- df.alpha$Gross.Fiscal.Deficit/df.alpha$GSDP.Bas
 
 ##  Log GSDP
 
-df.alpha$Log.GSDP <- log(df.alpha$GSDP.per.capita)
+df.alpha$Log.GSDP.per.capita <- log(df.alpha$GSDP.per.capita)
+
+##  Rank GSDP.per.capita
+
+df.alpha <- transform(df.alpha,
+          Income.Rank = ave(GSDP.per.capita, Year,
+                            FUN = function(x) rank(-x, ties.method = "first")))
+
+##  Log Initial GSDP
+
+df.alpha <- df.alpha %>%
+        group_by(State) %>% 
+        arrange(State, Year) %>%
+        mutate(Log.Initial.GSDP = log(GSDP.Base.1980[1]))
 
 ##  Coerce into panel data frame
 
@@ -175,5 +200,15 @@ df.alpha$Year <- as.numeric(df.alpha$Year)
 
 ##  Growth
 
-df.alpha$GSDP.Growth <- diff(df.alpha$Log.GSDP, lag = 1)
+df.alpha$GSDP.Growth <- diff(df.alpha$Log.GSDP.per.capita, lag = 1)
 
+##  Average Growth
+
+df.alpha <- df.alpha %>%
+        group_by(State) %>% 
+        arrange(State) %>%
+        mutate(Average.GSDP.Growth = mean(GSDP.Growth, na.rm = T))
+
+##  Lagged GDSP per capita
+
+df.alpha$Lagged.Log.GSDP.per.capita <- lag(df.alpha$Log.GSDP.per.capita, k = 1)
