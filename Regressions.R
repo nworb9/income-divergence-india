@@ -17,10 +17,10 @@ p <- plm(GSDP.Base.1980 ~ Grain.Yields + Percent.Irrigated + Capex + Credit.by.S
             Percentage.Ag.Share.GDP + Share.Rural.Pop + Social.Expenditure,
     data = df.alpha, index = c("State", "Year"), model = "within", effect = "time")
 library(sandwich)
-robust.se = sqrt(diag(vcovHC(p, type =  "HC1")))
+robust.se = sqrt(diag(vcovHC(a, type =  "HC1")))
 library(lmtest)
-coeftest(p, robust.se)
+coeftest(a, robust.se)
 
 
-summary(p)
+summary(a)
 
