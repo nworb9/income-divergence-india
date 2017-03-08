@@ -1,4 +1,6 @@
-##  [Exploring Data]  ##
+#==========================================================================================
+# Exploring Data
+#==========================================================================================
 
 ggplot(data = df.alpha, aes(x = Year, y = GSDP.per.capita, color = State)) +
         geom_line(aes(color = State), size = 1) +
@@ -10,7 +12,9 @@ ggplot(data = df.alpha, aes(x = Year, y = Average.GSDP.Growth, color = State)) +
         geom_line(aes(color = State), size = 1) +
         geom_point(aes(color = State), size = 1.3)
 
-# [ Bump Chart ]
+#------------------------------------------------------------------------------------------
+# Bump Chart
+#------------------------------------------------------------------------------------------
 
 ggplot(data = df.alpha, aes(x = Year, y = Income.Rank, color = State)) +
         geom_line(aes(color = State), size = 2) +
@@ -21,7 +25,9 @@ ggplot(data = df.alpha, aes(x = Year, y = Income.Rank, color = State)) +
         labs(x = "Year", y = "Rank") +
         scale_y_continuous(trans = "reverse", breaks = unique(df.alpha$Income.Rank))
 
-##  Themes
+#------------------------------------------------------------------------------------------
+#  Themes
+#------------------------------------------------------------------------------------------
 
 theme.porttheme <-  
         theme(text = element_text(family = "Gill Sans", color = "#444444")) +
@@ -44,8 +50,10 @@ theme.smallmult <-
         theme(axis.text = element_text(size = 6)) +
         theme(axis.text.x = element_text(angle = 90))
 
-##  Prelim small multiples plot
-
+#------------------------------------------------------------------------------------------
+#  Preliminary small multiples plot
+#------------------------------------------------------------------------------------------
+        
 ggplot(data = df.alpha, aes(x = Year, y = GSDP.per.capita, color = State)) +
         geom_line(size = 1) +
         geom_point(size = 1.1) +
@@ -54,16 +62,22 @@ ggplot(data = df.alpha, aes(x = Year, y = GSDP.per.capita, color = State)) +
         labs(x = "Year", y="GSDP\nin INR") +
         theme.smallmult
 
-##  Brew Colors
-
+#------------------------------------------------------------------------------------------
+#  Brew Colors
+#------------------------------------------------------------------------------------------
+        
 # work in progress...
 
-##  Panel Scatterplot
-
+#------------------------------------------------------------------------------------------
+#  Panel Scatterplot
+#------------------------------------------------------------------------------------------
+        
 scatterplot(GSDP.per.capita ~ Year|State, boxplots = F, smooth = T, reg.line = F, data = df.alpha)
 
-##  Correlation Plot
-
+#------------------------------------------------------------------------------------------
+#  Correlation Plot
+#------------------------------------------------------------------------------------------
+        
 match("Grain.Yields", names(df.alpha)) ## 7
 match("Water.Access", names(df.alpha)) ## 4
 match("Credit.by.SCBs", names(df.alpha)) ## 12
@@ -79,16 +93,20 @@ corrplot(correlations, method = "circle")
 
 # red is negative correlation, blue is positive
 # the larger the circle, the higher the correlation
-        
-## [ Fixed Effects Models ]
 
-##  Heterogeineity across states
+#==========================================================================================
+# Fixed Effects Models
+#==========================================================================================
+# Heterogeineity across states
+#------------------------------------------------------------------------------------------
 
 plotmeans(GSDP.per.capita ~ State, main = "Heterogeineity across states", data=df.alpha)
 
 # clear stagnancy across poorer states
 
-##  Heterogeineity across years
+#------------------------------------------------------------------------------------------
+# Heterogeineity across years
+#------------------------------------------------------------------------------------------
 
 plotmeans(GSDP.per.capita ~ Year, main = "Heterogeneity across years", data = df.alpha)
 

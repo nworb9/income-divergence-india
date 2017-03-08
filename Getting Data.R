@@ -1,4 +1,7 @@
-##  [Getting Data]  ##
+#==========================================================================================
+# Getting Data
+#==========================================================================================
+
 
 setwd("C:\\Users\\nworb95\\Desktop\\Dissertation RStudio")
 
@@ -20,12 +23,16 @@ packages <- c("sp", "sandwich", "gplots", "zoo", "plm", "car", "ggplot2","plyr",
               "lmtest", "psych")
 checkAndDownload(packages)
 
-##  Load data
+#------------------------------------------------------------------------------------------
+#  Load data
+#------------------------------------------------------------------------------------------
 
 df.alpha <- read.csv("India_Regional_Disparities.csv", stringsAsFactors = T)
 head(df.alpha)
 
-##  Line graphs to check for outliers
+#------------------------------------------------------------------------------------------
+# Line graphs to check for outliers
+#------------------------------------------------------------------------------------------
 
 ggplot(data = df.alpha, aes(x = Year, y = Water.Access, color = State), na.omit = T) +
         xlim(1991, 2015) +

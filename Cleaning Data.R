@@ -1,6 +1,8 @@
-##  [Cleaning Data]  ##
-
-##  Drop empty columns
+#==========================================================================================
+# Cleaning Data
+#==========================================================================================
+# Drop empty columns
+#------------------------------------------------------------------------------------------
 
 drop.cols <- c('X', 'X.1')
 df.alpha <- df.alpha %>% select(-one_of(drop.cols))
@@ -8,95 +10,95 @@ df.alpha$State[df.alpha$State=='']=NA
 df.alpha$State = droplevels(df.alpha$State)
 head(df.alpha)
 
-##  Fix Bihar km highways (original data reports 35339, a value 10x more 
-##  than previous year's value, and greater than the next year's value by
-##  a similar factor)
+#------------------------------------------------------------------------------------------
+# Fix Bihar km highways (original data reports 35339, a value 10x more than previous 
+# year's value, and greater than the next year's value by a similar factor)
+#------------------------------------------------------------------------------------------
+
+
 
 df.alpha$Km.Highways[105] ##  35339 reported, clearly an error
 df.alpha$Km.Highways[105] <- 3533
 df.alpha$Km.Highways[105] ##  3533
 
-
-##  Assam's Percentage.BPL values are missing
+#------------------------------------------------------------------------------------------
+#  Assam's Percentage.BPL values are missing
+#------------------------------------------------------------------------------------------
 
 df.alpha$Percentage.BPL[69] <- 40.86
 df.alpha$Percentage.BPL[75] <- 36.09
 df.alpha$Percentage.BPL[80] <- 34.04
 df.alpha$Percentage.BPL[85] <- 37.90
 
-##  Select time period
+#------------------------------------------------------------------------------------------
+#  Select time period
+#------------------------------------------------------------------------------------------
 
 df.alpha <- subset(df.alpha, State != "All.India" & Year <= 2011 & Year > 1990)
 
-##  Interpolate values
+#------------------------------------------------------------------------------------------
+#  Interpolate values
+#------------------------------------------------------------------------------------------
 
 colnames(df.alpha)[unlist(lapply(df.alpha, function(x) anyNA(x)))]
 
 df.alpha <- df.alpha %>%
         group_by(State) %>% 
         arrange(State, Year) %>%
-        filter(sum(!is.na(Population))>=2) %>% #filter!
         mutate(Population = approx(Year, Population, Year, 
                                    method = "linear", rule = 1, f = 0, ties = mean)$y)
 
 df.alpha <- df.alpha %>%
         group_by(State) %>% 
         arrange(State, Year) %>%
-        filter(sum(!is.na(Water.Access))>=2) %>% #filter!
         mutate(Water.Access = approx(Year, Water.Access, Year, 
                                    method = "linear", rule = 1, f = 0, ties = mean)$y)
 
 df.alpha <- df.alpha %>%
         group_by(State) %>% 
         arrange(State, Year) %>%
-        filter(sum(!is.na(Corruption.Convictions))>=2) %>% #filter!
         mutate(Corruption.Convictions = approx(Year, Corruption.Convictions, Year, 
                                      method = "linear", rule = 1, f = 0, ties = mean)$y)
 
 df.alpha <- df.alpha %>%
         group_by(State) %>% 
         arrange(State, Year) %>%
-        filter(sum(!is.na(HDI))>=2) %>% #filter!
         mutate(HDI = approx(Year, HDI, Year, 
                                      method = "linear", rule = 1, f = 0, ties = mean)$y)
 
 df.alpha <- df.alpha %>%
         group_by(State) %>% 
         arrange(State, Year) %>%
-        filter(sum(!is.na(Infant.Mortality.Rate))>=2) %>% #filter!
         mutate(Infant.Mortality.Rate = approx(Year, Infant.Mortality.Rate, Year, 
                                      method = "linear", rule = 1, f = 0, ties = mean)$y)
 
 df.alpha <- df.alpha %>%
         group_by(State) %>% 
         arrange(State, Year) %>%
-        filter(sum(!is.na(Literacy.Rate))>=2) %>% #filter!
         mutate(Literacy.Rate = approx(Year, Literacy.Rate, Year, 
                                      method = "linear", rule = 1, f = 0, ties = mean)$y)
 
 df.alpha <- df.alpha %>%
         group_by(State) %>% 
         arrange(State, Year) %>%
-        filter(sum(!is.na(Percentage.BPL))>=2) %>% #filter!
         mutate(Percentage.BPL = approx(Year, Percentage.BPL, Year, 
                                      method = "linear", rule = 1, f = 0, ties = mean)$y)
 
 df.alpha <- df.alpha %>%
         group_by(State) %>% 
         arrange(State, Year) %>%
-        filter(sum(!is.na(Total.Registered.Vehicles))>=2) %>% #filter!
         mutate(Total.Registered.Vehicles = approx(Year, Total.Registered.Vehicles, Year, 
                                      method = "linear", rule = 1, f = 0, ties = mean)$y)
 
 df.alpha <- df.alpha %>%
         group_by(State) %>% 
         arrange(State, Year) %>%
-        filter(sum(!is.na(Share.Rural.Pop))>=2) %>% #filter!
         mutate(Share.Rural.Pop = approx(Year, Share.Rural.Pop, Year, 
                                      method = "linear", rule = 1, f = 0, ties = mean)$y)
 
-
-##  Subset alpha frame
+#------------------------------------------------------------------------------------------
+# Subset alpha frame
+#------------------------------------------------------------------------------------------
 
 df.Andhra <- subset(df.alpha, State == "Andhra.Pradesh")
 df.Assam <- subset(df.alpha, State == "Assam")
@@ -114,101 +116,145 @@ df.Tamil <- subset(df.alpha, State == "Tamil.Nadu")
 df.UP <- subset(df.alpha, State == "Uttar.Pradesh")
 df.WBengal <- subset(df.alpha, State == "West.Bengal")
 
-##  [New interpretable variables]  ##
-
-##  GSDP.per.capita
+#==========================================================================================
+# New Interpretable Values
+#==========================================================================================
+#  GSDP.per.capita
+#------------------------------------------------------------------------------------------
 
 df.alpha$GSDP.per.capita <- df.alpha$GSDP.Base.1980/df.alpha$Population
 
-##  Corruption Convictions
+#------------------------------------------------------------------------------------------
+#  Corruption Convictions
+#------------------------------------------------------------------------------------------
 
 df.alpha$Corruption.Convictions <- df.alpha$Corruption.Convictions/df.alpha$Population
 
-##  Grain Yields
+#------------------------------------------------------------------------------------------
+#  Grain Yields
+#------------------------------------------------------------------------------------------
 
 df.alpha$Grain.Yields <- df.alpha$Grain.Yields/df.alpha$Population
 
-##  Rural Bank Branches
+#------------------------------------------------------------------------------------------
+#  Rural Bank Branches
+#------------------------------------------------------------------------------------------
 
 df.alpha$Rural.Bank.Branches <- df.alpha$Rural.Bank.Branches/df.alpha$Population
 
-##  Capex
+#------------------------------------------------------------------------------------------
+#  Capex
+#------------------------------------------------------------------------------------------
 
 df.alpha$Capex <- df.alpha$Capex/df.alpha$Population
 
-##  Credit.by.SCBs
+#------------------------------------------------------------------------------------------
+#  Credit.by.SCBs
+#------------------------------------------------------------------------------------------
 
 df.alpha$Credit.by.SCBs <- df.alpha$Credit.by.SCBs/df.alpha$GSDP.Base.1980
 
-##  Credit/Deposit Ratio
+#------------------------------------------------------------------------------------------
+#  Credit/Deposit Ratio
+#------------------------------------------------------------------------------------------
 
 df.alpha$Credit.Deposit.Ratio <- df.alpha$Credit.Deposit.Ratio/df.alpha$GSDP.Base.1980
 
-##  Credit to Agriculture
+#------------------------------------------------------------------------------------------
+#  Credit to Agriculture
+#------------------------------------------------------------------------------------------
 
 df.alpha$Credit.to.Ag <- df.alpha$Credit.to.Ag/df.alpha$GSDP.Base.1980
 
-##  Credit to Industry
+#------------------------------------------------------------------------------------------
+#  Credit to Industry
+#------------------------------------------------------------------------------------------
 
 df.alpha$Credit.to.Industry <- df.alpha$Credit.to.Industry/df.alpha$GSDP.Base.1980
 
-##  Gross Fixed Capital Formation
+#------------------------------------------------------------------------------------------
+#  Gross Fixed Capital Formation
+#------------------------------------------------------------------------------------------
 
 df.alpha$Gross.Fixed.Capital.Formation <- df.alpha$Gross.Fixed.Capital.Formation/df.alpha$GSDP.Base.1980
 
-##  Km Highways
+#------------------------------------------------------------------------------------------
+#  Km Highways
+#------------------------------------------------------------------------------------------
 
 df.alpha$Km.Highways <- df.alpha$Km.Highways/df.alpha$Population
 
-##  Personal Loans by SCBs
+#------------------------------------------------------------------------------------------
+#  Personal Loans by SCBs
+#------------------------------------------------------------------------------------------
 
 df.alpha$Personal.Loans.by.SCBs <- df.alpha$Personal.Loans.by.SCBs/df.alpha$Population
 
-##  Total Registered Vehicles
+#------------------------------------------------------------------------------------------
+#  Total Registered Vehicles
+#------------------------------------------------------------------------------------------
 
 df.alpha$Total.Registered.Vehicles <- df.alpha$Total.Registered.Vehicles/df.alpha$Population
 
-##  Social Expenditure
+#------------------------------------------------------------------------------------------
+#  Social Expenditure
+#------------------------------------------------------------------------------------------
 
 df.alpha$Social.Expenditure <- df.alpha$Social.Expenditure/df.alpha$GSDP.Base.1980
 
-##  Gross Fiscal Deficit
+#------------------------------------------------------------------------------------------
+#  Gross Fiscal Deficit
+#------------------------------------------------------------------------------------------
 
 df.alpha$Gross.Fiscal.Deficit <- df.alpha$Gross.Fiscal.Deficit/df.alpha$GSDP.Base.1980
 
-##  Log GSDP
+#------------------------------------------------------------------------------------------
+#  Log GSDP
+#------------------------------------------------------------------------------------------
 
 df.alpha$Log.GSDP.per.capita <- log(df.alpha$GSDP.per.capita)
 
-##  Rank GSDP.per.capita
+#------------------------------------------------------------------------------------------
+#  Rank GSDP.per.capita
+#------------------------------------------------------------------------------------------
 
 df.alpha <- transform(df.alpha,
           Income.Rank = ave(GSDP.per.capita, Year,
                             FUN = function(x) rank(-x, ties.method = "first")))
 
-##  Log Initial GSDP
+#------------------------------------------------------------------------------------------
+#  Log Initial GSDP
+#------------------------------------------------------------------------------------------
 
 df.alpha <- df.alpha %>%
         group_by(State) %>% 
         arrange(State, Year) %>%
         mutate(Log.Initial.GSDP = log(GSDP.Base.1980[1]))
 
-##  Coerce into panel data frame
+#------------------------------------------------------------------------------------------
+#  Coerce into panel data frame
+#------------------------------------------------------------------------------------------
 
 df.alpha <- pdata.frame(df.alpha, index = c("State", "Year"), row.names = F)
 df.alpha$Year <- as.numeric(df.alpha$Year)
 
-##  Growth
+#------------------------------------------------------------------------------------------
+#  Growth
+#------------------------------------------------------------------------------------------
 
 df.alpha$GSDP.Growth <- diff(df.alpha$Log.GSDP.per.capita, lag = 1)
 
-##  Average Growth
+#------------------------------------------------------------------------------------------
+#  Average Growth
+#------------------------------------------------------------------------------------------
 
 df.alpha <- df.alpha %>%
         group_by(State) %>% 
         arrange(State) %>%
         mutate(Average.GSDP.Growth = mean(GSDP.Growth, na.rm = T))
 
-##  Lagged GDSP per capita
+#------------------------------------------------------------------------------------------
+#  Lagged GDSP per capita
+#------------------------------------------------------------------------------------------
 
 df.alpha$Lagged.Log.GSDP.per.capita <- lag(df.alpha$Log.GSDP.per.capita, k = 1)

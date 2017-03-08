@@ -1,4 +1,6 @@
-##  [Regressions]  ##
+#==========================================================================================
+# Regressions 
+#==========================================================================================
 
 
 #==========================================================================================
@@ -20,14 +22,13 @@ summary(unconditional)
 #==========================================================================================
 # GSDP.Growth = a + Beta(lagged.log.GSDP.per.capita) + Gamma(Variables) + u
 # -----------------------------------------------------------------------------------------
-#  Log initial gsdp per capita?  or laggedgsdp per capita? lagged gsdp per capita?
 #  explain why lagged
 #------------------------------------------------------------------------------------------
 # Fixed Effects
 #------------------------------------------------------------------------------------------
 # N Entity-Specific Intercepts
 
-fixed <- plm(GSDP.Growth ~  + Population + Grain.Yields + Water.Access + Credit.by.SCBs +
+fixed <- plm(GSDP.Growth ~ Lagged.Log.GSDP.per.capita + Population + Grain.Yields + Water.Access + Credit.by.SCBs +
                      Gross.Fixed.Capital.Formation + Per.Capita.Elec.Cons + Share.Rural.Pop, 
              data = df.alpha, index = c("State", "Year"), model = "within")
 
@@ -37,7 +38,7 @@ fixef(fixed) # display the fixed effects
 
 ## Random Effects
 
-random <- plm(Average.GSDP.Growth ~ GSDP.per.capita + Population + Grain.Yields + Water.Access + Credit.by.SCBs +
+random <- plm(GSDP.Growth ~ Lagged.Log.GSDP.per.capita + Population + Grain.Yields + Water.Access + Credit.by.SCBs +
                       Gross.Fixed.Capital.Formation + Per.Capita.Elec.Cons + Share.Rural.Pop,  
               data = df.alpha, index = c("State", "Year"), model = "random")
 
@@ -56,7 +57,8 @@ phtest(fixed, random) # Regressors too dependent :/
 # Testing for time-fixed effects
 #==========================================================================================
 
-fixed.time <- plm(GSDP.Growth ~ GSDP.per.capita + factor(Year) + Population + Grain.Yields + Water.Access + Credit.by.SCBs +
+fixed.time <- plm(GSDP.Growth ~ Lagged.Log.GSDP.per.capita + factor(Year) + Population + 
+                          Grain.Yields + Water.Access + Credit.by.SCBs +
                           Gross.Fixed.Capital.Formation + Per.Capita.Elec.Cons + Share.Rural.Pop,  
              data = df.alpha, index = c("State", "Year"), model = "within")
 
@@ -75,7 +77,7 @@ plmtest(fixed, c("time"), type = ("bp")) # p-value < 2.2e-16
 
 # Regular OLS (pooling model) using plm
 
-pool <- plm(GSDP.Growth ~ GSDP.per.capita + Population + Grain.Yields + Water.Access + Credit.by.SCBs +
+pool <- plm(GSDP.Growth ~ Lagged.Log.GSDP.per.capita + Population + Grain.Yields + Water.Access + Credit.by.SCBs +
                     Gross.Fixed.Capital.Formation + Per.Capita.Elec.Cons + Share.Rural.Pop,  
             data = df.alpha, index = c("State", "Year"), model = "pooling")
 
@@ -85,7 +87,7 @@ summary(pool)
 # regression- the null hypothesis is that variances across entities is zero,
 # or that there is no significant difference across units (ie. no panel effect)
 
-plmtest(pool, type = c("bp")) # p-value = 0.07779
+plmtest(pool, type = c("bp")) # p-value = 0.1947
 
 # Null not rejected, random effects inappropriate
 
@@ -124,6 +126,6 @@ pbgtest(fixed) # p-value = 0.0001209
 # The null hypothesis for the Breusch-Pagan test is homoskedasticity.
 #------------------------------------------------------------------------------------------
 
-bptest(GSDP.Growth ~ GSDP.per.capita +factor(State) + Population + Grain.Yields + Water.Access + Credit.by.SCBs +
+bptest(GSDP.Growth ~ Lagged.Log.GSDP.per.capita +factor(State) + Population + Grain.Yields + Water.Access + Credit.by.SCBs +
                Gross.Fixed.Capital.Formation + Per.Capita.Elec.Cons + Share.Rural.Pop,  
        data = df.alpha, studentize = F) # No heteroskedasticity
