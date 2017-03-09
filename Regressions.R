@@ -6,41 +6,56 @@
 #==========================================================================================
 # Unconditional Convergence Model
 #==========================================================================================
-# Avg.GSDP.Growth = a + Beta(log.initial.GSDP) + u
+# GSDP.Growth = a + Beta(lagged.log.GSDP) + u
 #
 # Pooling model used
 # -----------------------------------------------------------------------------------------
 
+unconditional2 <- plm(GSDP.Growth ~ Lagged.Log.GSDP.per.capita, data = df.alpha,
+                      index = c("State", "Year"), model = "pooling")
 
-unconditional <- plm(Average.GSDP.Growth ~ Log.Initial.GSDP, data = df.alpha, index = c("State", "Year"),
-                     model = "pooling")
+summary(unconditional2)
 
-summary(unconditional)
+coeftest(unconditional2, vcov = vcovHC(unconditional2, 
+                                       type = "HC0", cluster = "group")) # Clustered SEs
+
+resettest(GSDP.Growth ~ Lagged.Log.GSDP.per.capita, type = "regressor", 
+          data = df.alpha) # Functional form test
 
 #==========================================================================================
 # Conditional Convergence Model
 #==========================================================================================
 # GSDP.Growth = a + Beta(lagged.log.GSDP.per.capita) + Gamma(Variables) + u
-# -----------------------------------------------------------------------------------------
-#  explain why lagged
 #------------------------------------------------------------------------------------------
 # Fixed Effects
 #------------------------------------------------------------------------------------------
 # N Entity-Specific Intercepts
 
-fixed <- plm(GSDP.Growth ~ Lagged.Log.GSDP.per.capita + Population + Grain.Yields + Water.Access + Credit.by.SCBs +
+fixed <- plm(GSDP.Growth ~ Lagged.Log.GSDP.per.capita + Population.Growth + Grain.Yields + Water.Access + Credit.by.SCBs +
                      Gross.Fixed.Capital.Formation + Per.Capita.Elec.Cons + Share.Rural.Pop, 
              data = df.alpha, index = c("State", "Year"), model = "within")
 
 summary(fixed)
 
+coeftest(fixed, vcov = vcovHC(fixed, type = "HC0", 
+                              cluster = "group")) # Clustered SEs
+
+resettest(GSDP.Growth ~ Lagged.Log.GSDP.per.capita + Population.Growth + Grain.Yields + Water.Access + Credit.by.SCBs +
+                  Gross.Fixed.Capital.Formation + Per.Capita.Elec.Cons + Share.Rural.Pop,
+          type = "regressor", data = df.alpha) # Functional form test
+
 fixef(fixed) # display the fixed effects
 
-## Random Effects
+#------------------------------------------------------------------------------------------
+# Random Effects
+#------------------------------------------------------------------------------------------
 
-random <- plm(GSDP.Growth ~ Lagged.Log.GSDP.per.capita + Population + Grain.Yields + Water.Access + Credit.by.SCBs +
+random <- plm(GSDP.Growth ~ Lagged.Log.GSDP.per.capita + Population.Growth + Grain.Yields + Water.Access + Credit.by.SCBs +
                       Gross.Fixed.Capital.Formation + Per.Capita.Elec.Cons + Share.Rural.Pop,  
               data = df.alpha, index = c("State", "Year"), model = "random")
+
+coeftest(random, vcov = vcovHC(random, type = "HC0", 
+                               cluster = "group")) # Clustered SEs
 
 summary(random)
 
@@ -57,10 +72,13 @@ phtest(fixed, random) # Regressors too dependent :/
 # Testing for time-fixed effects
 #==========================================================================================
 
-fixed.time <- plm(GSDP.Growth ~ Lagged.Log.GSDP.per.capita + factor(Year) + Population + 
+fixed.time <- plm(GSDP.Growth ~ Lagged.Log.GSDP.per.capita + factor(Year) + Population.Growth + 
                           Grain.Yields + Water.Access + Credit.by.SCBs +
                           Gross.Fixed.Capital.Formation + Per.Capita.Elec.Cons + Share.Rural.Pop,  
-             data = df.alpha, index = c("State", "Year"), model = "within")
+                  data = df.alpha, index = c("State", "Year"), model = "within")
+
+coeftest(fixed.time, vcov = vcovHC(fixed.time, type = "HC0", 
+                                   cluster = "group")) # Clustered SEs
 
 summary(fixed.time)
 
@@ -77,9 +95,12 @@ plmtest(fixed, c("time"), type = ("bp")) # p-value < 2.2e-16
 
 # Regular OLS (pooling model) using plm
 
-pool <- plm(GSDP.Growth ~ Lagged.Log.GSDP.per.capita + Population + Grain.Yields + Water.Access + Credit.by.SCBs +
+pool <- plm(GSDP.Growth ~ Lagged.Log.GSDP.per.capita + Population.Growth + Grain.Yields + Water.Access + Credit.by.SCBs +
                     Gross.Fixed.Capital.Formation + Per.Capita.Elec.Cons + Share.Rural.Pop,  
             data = df.alpha, index = c("State", "Year"), model = "pooling")
+
+coeftest(pool, vcov = vcovHC(pool, type = "HC0", 
+                             cluster = "group")) # Clustered SEs
 
 summary(pool)
 
@@ -87,7 +108,7 @@ summary(pool)
 # regression- the null hypothesis is that variances across entities is zero,
 # or that there is no significant difference across units (ie. no panel effect)
 
-plmtest(pool, type = c("bp")) # p-value = 0.1947
+plmtest(pool, type = c("bp")) # p-value = 0.2154
 
 # Null not rejected, random effects inappropriate
 
@@ -116,7 +137,7 @@ pcdtest(fixed, test = c("cd")) # p-value < 2.2e-16
 # micro panels (with very few years). The null is that there is not serial correlation.
 #------------------------------------------------------------------------------------------
 
-pbgtest(fixed) # p-value = 0.0001209
+pbgtest(fixed) # p-value = 7.337e-06
 
 # Serial correlation in idiosyncratic errors
 
@@ -124,8 +145,36 @@ pbgtest(fixed) # p-value = 0.0001209
 # Testing for heteroskedasticity
 #==========================================================================================
 # The null hypothesis for the Breusch-Pagan test is homoskedasticity.
+# Breusch-Pagan test for model because of amount of regressors.
 #------------------------------------------------------------------------------------------
 
-bptest(GSDP.Growth ~ Lagged.Log.GSDP.per.capita +factor(State) + Population + Grain.Yields + Water.Access + Credit.by.SCBs +
-               Gross.Fixed.Capital.Formation + Per.Capita.Elec.Cons + Share.Rural.Pop,  
+bptest(GSDP.Growth ~ Lagged.Log.GSDP.per.capita +factor(State) + Population.Growth + Grain.Yields 
+       + Water.Access + Credit.by.SCBs + Gross.Fixed.Capital.Formation + Per.Capita.Elec.Cons 
+       + Share.Rural.Pop,  
        data = df.alpha, studentize = F) # No heteroskedasticity
+
+#==========================================================================================
+# Testing for normality
+#==========================================================================================
+# Shapiro-Wilk normality test
+#------------------------------------------------------------------------------------------
+
+
+
+shapiro.test(df.alpha$GSDP.Growth)
+
+shapiro.test(df.alpha$Lagged.Log.GSDP.per.capita)
+
+shapiro.test(df.alpha$Population.Growth)
+
+shapiro.test(df.alpha$Grain.Yields)
+
+shapiro.test(df.alpha$Water.Access)
+
+shapiro.test(df.alpha$Credit.by.SCBs)
+
+shapiro.test(df.alpha$Gross.Fixed.Capital.Formation)
+
+shapiro.test(df.alpha$Per.Capita.Elec.Cons)
+
+shapiro.test(df.alpha$Share.Rural.Pop)

@@ -42,59 +42,18 @@ df.alpha <- subset(df.alpha, State != "All.India" & Year <= 2011 & Year > 1990)
 
 colnames(df.alpha)[unlist(lapply(df.alpha, function(x) anyNA(x)))]
 
+
+
+
 df.alpha <- df.alpha %>%
         group_by(State) %>% 
         arrange(State, Year) %>%
         mutate(Population = approx(Year, Population, Year, 
-                                   method = "linear", rule = 1, f = 0, ties = mean)$y)
-
-df.alpha <- df.alpha %>%
-        group_by(State) %>% 
-        arrange(State, Year) %>%
-        mutate(Water.Access = approx(Year, Water.Access, Year, 
-                                   method = "linear", rule = 1, f = 0, ties = mean)$y)
-
-df.alpha <- df.alpha %>%
-        group_by(State) %>% 
-        arrange(State, Year) %>%
-        mutate(Corruption.Convictions = approx(Year, Corruption.Convictions, Year, 
-                                     method = "linear", rule = 1, f = 0, ties = mean)$y)
-
-df.alpha <- df.alpha %>%
-        group_by(State) %>% 
-        arrange(State, Year) %>%
-        mutate(HDI = approx(Year, HDI, Year, 
-                                     method = "linear", rule = 1, f = 0, ties = mean)$y)
-
-df.alpha <- df.alpha %>%
-        group_by(State) %>% 
-        arrange(State, Year) %>%
-        mutate(Infant.Mortality.Rate = approx(Year, Infant.Mortality.Rate, Year, 
-                                     method = "linear", rule = 1, f = 0, ties = mean)$y)
-
-df.alpha <- df.alpha %>%
-        group_by(State) %>% 
-        arrange(State, Year) %>%
-        mutate(Literacy.Rate = approx(Year, Literacy.Rate, Year, 
-                                     method = "linear", rule = 1, f = 0, ties = mean)$y)
-
-df.alpha <- df.alpha %>%
-        group_by(State) %>% 
-        arrange(State, Year) %>%
-        mutate(Percentage.BPL = approx(Year, Percentage.BPL, Year, 
-                                     method = "linear", rule = 1, f = 0, ties = mean)$y)
-
-df.alpha <- df.alpha %>%
-        group_by(State) %>% 
-        arrange(State, Year) %>%
+                                   method = "linear", rule = 1, f = 0, ties = mean)$y) %>%
         mutate(Total.Registered.Vehicles = approx(Year, Total.Registered.Vehicles, Year, 
-                                     method = "linear", rule = 1, f = 0, ties = mean)$y)
-
-df.alpha <- df.alpha %>%
-        group_by(State) %>% 
-        arrange(State, Year) %>%
+                                                  method = "linear", rule = 1, f = 0, ties = mean)$y) %>%
         mutate(Share.Rural.Pop = approx(Year, Share.Rural.Pop, Year, 
-                                     method = "linear", rule = 1, f = 0, ties = mean)$y)
+                                        method = "linear", rule = 1, f = 0, ties = mean)$y)
 
 #------------------------------------------------------------------------------------------
 # Subset alpha frame
@@ -219,8 +178,8 @@ df.alpha$Log.GSDP.per.capita <- log(df.alpha$GSDP.per.capita)
 #------------------------------------------------------------------------------------------
 
 df.alpha <- transform(df.alpha,
-          Income.Rank = ave(GSDP.per.capita, Year,
-                            FUN = function(x) rank(-x, ties.method = "first")))
+                      Income.Rank = ave(GSDP.per.capita, Year,
+                                        FUN = function(x) rank(-x, ties.method = "first")))
 
 #------------------------------------------------------------------------------------------
 #  Log Initial GSDP
@@ -243,6 +202,18 @@ df.alpha$Year <- as.numeric(df.alpha$Year)
 #------------------------------------------------------------------------------------------
 
 df.alpha$GSDP.Growth <- diff(df.alpha$Log.GSDP.per.capita, lag = 1)
+
+#------------------------------------------------------------------------------------------
+#  Log Population
+#------------------------------------------------------------------------------------------
+
+df.alpha$Log.Population <- log(df.alpha$Population)
+
+#------------------------------------------------------------------------------------------
+#  Population Growth
+#------------------------------------------------------------------------------------------
+
+df.alpha$Population.Growth <- diff(df.alpha$Log.Population, lag = 1)
 
 #------------------------------------------------------------------------------------------
 #  Average Growth

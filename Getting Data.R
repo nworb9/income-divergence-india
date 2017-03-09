@@ -18,10 +18,12 @@ isInstalled <- function(mypkg){
         is.element(mypkg, installed.packages()[,1])
 }
 
-packages <- c("sp", "sandwich", "gplots", "zoo", "plm", "car", "ggplot2","plyr","rgeos",
-              "sqldf", "RColorBrewer", "dplyr", "dtplyr", "data.table", "corrplot", "tseries",
-              "lmtest", "psych")
+packages <- c("sp", "sandwich", "gplots", "zoo", "plm", "car", "ggplot2",
+              "plyr", "rgeos", "sqldf", "RColorBrewer", "dplyr", "dtplyr",
+              "data.table", "corrplot", "tseries", "lmtest", "psych")
 checkAndDownload(packages)
+
+
 
 #------------------------------------------------------------------------------------------
 #  Load data

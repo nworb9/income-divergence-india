@@ -333,7 +333,7 @@ dataIpol <- df.alpha %>%
         arrange(State, Year) %>%
         filter(sum(!is.na(Population))>=2) %>% #filter!
         mutate(Population = approx(Year, Population, Year, 
-                                  method = "linear", rule = 1, f = 0, ties = mean)$y)
+                                   method = "linear", rule = 1, f = 0, ties = mean)$y)
 
 dataIpol <- df.alpha %>%
         group_by(State) %>% 
@@ -362,7 +362,7 @@ df.beta <- df.alpha %>%
                     "Percentage.Ag.Share.GDP", "Share.Rural.Pop", "Social.Expenditure",
                     "Gross.FIscal.Deficit")) {
                 mutate(i = approx(Year, i, Year, 
-                                           method = "linear", rule = 1, f = 0, ties = mean)$y)
+                                  method = "linear", rule = 1, f = 0, ties = mean)$y)
         }
 
 for i in (c("Population", "Water.Access", "Corruption.Convictions", "HDI", "Infant.Mortality.Rate", 

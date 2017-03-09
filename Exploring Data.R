@@ -1,7 +1,7 @@
 #==========================================================================================
 # Exploring Data
 #==========================================================================================
-
+library(ggplot2)
 ggplot(data = df.alpha, aes(x = Year, y = GSDP.per.capita, color = State)) +
         geom_line(aes(color = State), size = 1) +
         geom_point(aes(color = State), size = 1.3) +
@@ -47,13 +47,13 @@ theme.smallmult <-
         theme(axis.title.y = element_text(angle = 0, vjust = .5, margin = margin(r = 15))) +
         theme(axis.title.x = element_text(margin = margin(t = 20))) +
         theme(legend.title = element_blank())
-        theme(axis.text = element_text(size = 6)) +
+theme(axis.text = element_text(size = 6)) +
         theme(axis.text.x = element_text(angle = 90))
 
 #------------------------------------------------------------------------------------------
 #  Preliminary small multiples plot
 #------------------------------------------------------------------------------------------
-        
+
 ggplot(data = df.alpha, aes(x = Year, y = GSDP.per.capita, color = State)) +
         geom_line(size = 1) +
         geom_point(size = 1.1) +
@@ -62,22 +62,28 @@ ggplot(data = df.alpha, aes(x = Year, y = GSDP.per.capita, color = State)) +
         labs(x = "Year", y="GSDP\nin INR") +
         theme.smallmult
 
+ggplot(data = df.alpha, aes(x = Year, y = Population.Growth)) +
+        geom_line(size = 1) +
+        geom_point(size = 1.1) +
+        facet_wrap(~State) +
+        theme.smallmult
+
 #------------------------------------------------------------------------------------------
 #  Brew Colors
 #------------------------------------------------------------------------------------------
-        
+
 # work in progress...
 
 #------------------------------------------------------------------------------------------
 #  Panel Scatterplot
 #------------------------------------------------------------------------------------------
-        
+
 scatterplot(GSDP.per.capita ~ Year|State, boxplots = F, smooth = T, reg.line = F, data = df.alpha)
 
 #------------------------------------------------------------------------------------------
 #  Correlation Plot
 #------------------------------------------------------------------------------------------
-        
+
 match("Grain.Yields", names(df.alpha)) ## 7
 match("Water.Access", names(df.alpha)) ## 4
 match("Credit.by.SCBs", names(df.alpha)) ## 12
