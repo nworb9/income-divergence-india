@@ -79,7 +79,7 @@ ggplot(data = df.alpha, aes(x = Year, y = Population.Growth)) +
 #------------------------------------------------------------------------------------------
 
 scatterplot(GSDP.per.capita ~ Year|State, boxplots = F, smooth = T, reg.line = F, data = df.alpha)
-
+scatterplot(GSDP.Growth ~ Year|State, boxplots = F, smooth = T, reg.line = F, data = df.alpha)
 #------------------------------------------------------------------------------------------
 #  Correlation Plot
 #------------------------------------------------------------------------------------------
@@ -91,14 +91,27 @@ match("Gross.Fixed.Capital.Formation", names(df.alpha)) ## 16
 match("Per.Capita.Elec.Cons", names(df.alpha)) ## 20
 match("Share.Rural.Pop", names(df.alpha)) ## 27
 
-correlations <- cor(df.alpha[1:21,c(4, 7, 12, 16, 20, 27)])
+correlations <- cor(df.alpha[1:21,c(4:7, 9:29)])
 corrplot(correlations, method = "circle")
 
-correlations <- cor(df.alpha[1:21, c(7, 12, 16, 27)])
-corrplot(correlations, method = "circle")
+correlations2 <- cor(df.alpha[1:21, c(7, 12, 16, 27)])
+corrplot(correlations2, method = "circle")
 
 # red is negative correlation, blue is positive
 # the larger the circle, the higher the correlation
+
+stargazer(correlations2, title = "Correlation Matrix")
+
+df.malpha <- df.alpha
+
+dropitlikeitshot <- colnames(df.malpha)[colSums(is.na(df.malpha)) > 0]
+
+df.malpha <- df.malpha %>% select(-one_of(dropitlikeitshot))
+
+df.malpha <- as.matrix(df.malpha[,3:29])
+
+whatworks <- rcorr(df.malpha, type = "spearman")
+
 
 #==========================================================================================
 # Fixed Effects Models
@@ -110,6 +123,8 @@ plotmeans(GSDP.per.capita ~ State, main = "Heterogeineity across states", data=d
 
 # clear stagnancy across poorer states
 
+plotmeans(GSDP.Growth ~ State, main = "Heterogeineity across states", data=df.alpha)
+
 #------------------------------------------------------------------------------------------
 # Heterogeineity across years
 #------------------------------------------------------------------------------------------
@@ -117,3 +132,5 @@ plotmeans(GSDP.per.capita ~ State, main = "Heterogeineity across states", data=d
 plotmeans(GSDP.per.capita ~ Year, main = "Heterogeneity across years", data = df.alpha)
 
 # clear divergence over time
+
+plotmeans(GSDP.Growth ~ Year, main = "Heterogeneity across years", data = df.alpha)

@@ -55,25 +55,6 @@ df.alpha <- df.alpha %>%
         mutate(Share.Rural.Pop = approx(Year, Share.Rural.Pop, Year, 
                                         method = "linear", rule = 1, f = 0, ties = mean)$y)
 
-#------------------------------------------------------------------------------------------
-# Subset alpha frame
-#------------------------------------------------------------------------------------------
-
-df.Andhra <- subset(df.alpha, State == "Andhra.Pradesh")
-df.Assam <- subset(df.alpha, State == "Assam")
-df.Bihar <- subset(df.alpha, State == "Bihar")
-df.Gujarat <- subset(df.alpha, State == "Gujarat")
-df.Haryana <- subset(df.alpha, State == "Haryana")
-df.Karnataka <- subset(df.alpha, State == "Karnataka")
-df.Kerala <- subset(df.alpha, State == "Kerala")
-df.Madhya <- subset(df.alpha, State == "Madhya.Pradesh")
-df.Maha <- subset(df.alpha, State == "Maharashtra")
-df.Odisha <- subset(df.alpha, State == "Odisha")
-df.Punjab <- subset(df.alpha, State == "Punjab")
-df.Raja <- subset(df.alpha, State == "Rajasthan")
-df.Tamil <- subset(df.alpha, State == "Tamil.Nadu")
-df.UP <- subset(df.alpha, State == "Uttar.Pradesh")
-df.WBengal <- subset(df.alpha, State == "West.Bengal")
 
 #==========================================================================================
 # New Interpretable Values
@@ -229,3 +210,48 @@ df.alpha <- df.alpha %>%
 #------------------------------------------------------------------------------------------
 
 df.alpha$Lagged.Log.GSDP.per.capita <- lag(df.alpha$Log.GSDP.per.capita, k = 1)
+
+#------------------------------------------------------------------------------------------
+# Subset alpha frame
+#------------------------------------------------------------------------------------------
+
+df.Andhra <- subset(df.alpha, State == "Andhra.Pradesh")
+df.Assam <- subset(df.alpha, State == "Assam")
+df.Bihar <- subset(df.alpha, State == "Bihar")
+df.Gujarat <- subset(df.alpha, State == "Gujarat")
+df.Haryana <- subset(df.alpha, State == "Haryana")
+df.Karnataka <- subset(df.alpha, State == "Karnataka")
+df.Kerala <- subset(df.alpha, State == "Kerala")
+df.Madhya <- subset(df.alpha, State == "Madhya.Pradesh")
+df.Maha <- subset(df.alpha, State == "Maharashtra")
+df.Odisha <- subset(df.alpha, State == "Odisha")
+df.Punjab <- subset(df.alpha, State == "Punjab")
+df.Raja <- subset(df.alpha, State == "Rajasthan")
+df.Tamil <- subset(df.alpha, State == "Tamil.Nadu")
+df.UP <- subset(df.alpha, State == "Uttar.Pradesh")
+df.WBengal <- subset(df.alpha, State == "West.Bengal")
+
+#------------------------------------------------------------------------------------------
+# Change Years
+#------------------------------------------------------------------------------------------
+df.alpha$Year[df.alpha$Year == 1] <- 1991 
+df.alpha$Year[df.alpha$Year == 2] <- 1992
+df.alpha$Year[df.alpha$Year == 3] <- 1993
+df.alpha$Year[df.alpha$Year == 4] <- 1994
+df.alpha$Year[df.alpha$Year == 5] <- 1995
+df.alpha$Year[df.alpha$Year == 6] <- 1996
+df.alpha$Year[df.alpha$Year == 7] <- 1997
+df.alpha$Year[df.alpha$Year == 8] <- 1998
+df.alpha$Year[df.alpha$Year == 9] <- 1999
+df.alpha$Year[df.alpha$Year == 10] <- 2000
+df.alpha$Year[df.alpha$Year == 11] <- 2001
+df.alpha$Year[df.alpha$Year == 12] <- 2002
+df.alpha$Year[df.alpha$Year == 13] <- 2003
+df.alpha$Year[df.alpha$Year == 14] <- 2004
+df.alpha$Year[df.alpha$Year == 15] <- 2005
+df.alpha$Year[df.alpha$Year == 16] <- 2006
+df.alpha$Year[df.alpha$Year == 17] <- 2007
+df.alpha$Year[df.alpha$Year == 18] <- 2008
+df.alpha$Year[df.alpha$Year == 19] <- 2009
+df.alpha$Year[df.alpha$Year == 20] <- 2010
+df.alpha$Year[df.alpha$Year == 21] <- 2011

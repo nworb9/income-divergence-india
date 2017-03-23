@@ -31,8 +31,8 @@ resettest(GSDP.Growth ~ Lagged.Log.GSDP.per.capita, type = "regressor",
 #------------------------------------------------------------------------------------------
 # N Entity-Specific Intercepts
 
-fixed <- plm(GSDP.Growth ~ Lagged.Log.GSDP.per.capita + Population.Growth + Grain.Yields + Water.Access + Credit.by.SCBs +
-                     Gross.Fixed.Capital.Formation + Per.Capita.Elec.Cons + Share.Rural.Pop, 
+fixed <- plm(GSDP.Growth ~ Lagged.Log.GSDP.per.capita + Population.Growth + Credit.by.SCBs +
+                      Per.Capita.Elec.Cons + Share.Rural.Pop, 
              data = df.alpha, index = c("State", "Year"), model = "within")
 
 summary(fixed)
@@ -50,8 +50,8 @@ fixef(fixed) # display the fixed effects
 # Random Effects
 #------------------------------------------------------------------------------------------
 
-random <- plm(GSDP.Growth ~ Lagged.Log.GSDP.per.capita + Population.Growth + Grain.Yields + Water.Access + Credit.by.SCBs +
-                      Gross.Fixed.Capital.Formation + Per.Capita.Elec.Cons + Share.Rural.Pop,  
+random <- plm(GSDP.Growth ~ Lagged.Log.GSDP.per.capita + Population.Growth + Credit.by.SCBs +
+                      Per.Capita.Elec.Cons + Share.Rural.Pop,  
               data = df.alpha, index = c("State", "Year"), model = "random")
 
 coeftest(random, vcov = vcovHC(random, type = "HC0", 
@@ -159,7 +159,7 @@ bptest(GSDP.Growth ~ Lagged.Log.GSDP.per.capita +factor(State) + Population.Grow
 # Shapiro-Wilk normality test
 #------------------------------------------------------------------------------------------
 
-
+lapply()
 
 shapiro.test(df.alpha$GSDP.Growth)
 
