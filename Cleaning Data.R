@@ -31,6 +31,12 @@ df.alpha$Percentage.BPL[80] <- 34.04
 df.alpha$Percentage.BPL[85] <- 37.90
 
 #------------------------------------------------------------------------------------------
+# Enormous outlier for Haryana in Gross Fixed Capital Formation
+#------------------------------------------------------------------------------------------
+
+df.alpha[87, 16] <- NA
+
+#------------------------------------------------------------------------------------------
 #  Select time period
 #------------------------------------------------------------------------------------------
 
@@ -53,7 +59,9 @@ df.alpha <- df.alpha %>%
         mutate(Total.Registered.Vehicles = approx(Year, Total.Registered.Vehicles, Year, 
                                                   method = "linear", rule = 1, f = 0, ties = mean)$y) %>%
         mutate(Share.Rural.Pop = approx(Year, Share.Rural.Pop, Year, 
-                                        method = "linear", rule = 1, f = 0, ties = mean)$y)
+                                        method = "linear", rule = 1, f = 0, ties = mean)$y) %>%
+        mutate(Literacy.Rate = approx(Year, Literacy.Rate, Year,
+                                      method = "linear", rule = 1, f = 0, ties = mean)$y)
 
 
 #==========================================================================================
@@ -128,7 +136,7 @@ df.alpha$Km.Highways <- df.alpha$Km.Highways/df.alpha$Population
 #  Personal Loans by SCBs
 #------------------------------------------------------------------------------------------
 
-df.alpha$Personal.Loans.by.SCBs <- df.alpha$Personal.Loans.by.SCBs/df.alpha$Population
+df.alpha$Personal.Loans.by.SCBs <- df.alpha$Personal.Loans.by.SCBs/df.alpha$GSDP.Base.1980
 
 #------------------------------------------------------------------------------------------
 #  Total Registered Vehicles
@@ -203,33 +211,21 @@ df.alpha$Population.Growth <- diff(df.alpha$Log.Population, lag = 1)
 df.alpha <- df.alpha %>%
         group_by(State) %>% 
         arrange(State) %>%
-        mutate(Average.GSDP.Growth = mean(GSDP.Growth, na.rm = T))
+        mutate(Average.GSDP.Growth = mean(GSDP.Growth, na.rm = T)) %>%
+        mutate(Average.Population.Growth = mean(Population.Growth, na.rm = T)) %>%
+        mutate(Average.Social.Expenditure = mean(Social.Expenditure, na.rm = T)) %>%
+        mutate(Average.Gross.Capital.Formation = mean(Gross.Fixed.Capital.Formation, na.rm = T)) %>%
+        mutate(Average.Personal.Loans.by.SCBs = mean(Personal.Loans.by.SCBs, na.rm = T)) %>%
+        mutate(Average.Literacy.Rate = mean(Literacy.Rate, na.rm = T)) %>%
+        mutate(Average.Elec.Cons = mean(Per.Capita.Elec.Cons, na.rm = T)) %>%
+        mutate(Average.IMR = mean(Infant.Mortality.Rate, na.rm = T)) %>%
+        mutate(Average.Ag.Share = mean(Percentage.Ag.Share.GDP, na.rm = T))
 
 #------------------------------------------------------------------------------------------
 #  Lagged GDSP per capita
 #------------------------------------------------------------------------------------------
 
 df.alpha$Lagged.Log.GSDP.per.capita <- lag(df.alpha$Log.GSDP.per.capita, k = 1)
-
-#------------------------------------------------------------------------------------------
-# Subset alpha frame
-#------------------------------------------------------------------------------------------
-
-df.Andhra <- subset(df.alpha, State == "Andhra.Pradesh")
-df.Assam <- subset(df.alpha, State == "Assam")
-df.Bihar <- subset(df.alpha, State == "Bihar")
-df.Gujarat <- subset(df.alpha, State == "Gujarat")
-df.Haryana <- subset(df.alpha, State == "Haryana")
-df.Karnataka <- subset(df.alpha, State == "Karnataka")
-df.Kerala <- subset(df.alpha, State == "Kerala")
-df.Madhya <- subset(df.alpha, State == "Madhya.Pradesh")
-df.Maha <- subset(df.alpha, State == "Maharashtra")
-df.Odisha <- subset(df.alpha, State == "Odisha")
-df.Punjab <- subset(df.alpha, State == "Punjab")
-df.Raja <- subset(df.alpha, State == "Rajasthan")
-df.Tamil <- subset(df.alpha, State == "Tamil.Nadu")
-df.UP <- subset(df.alpha, State == "Uttar.Pradesh")
-df.WBengal <- subset(df.alpha, State == "West.Bengal")
 
 #------------------------------------------------------------------------------------------
 # Change Years
@@ -255,3 +251,23 @@ df.alpha$Year[df.alpha$Year == 18] <- 2008
 df.alpha$Year[df.alpha$Year == 19] <- 2009
 df.alpha$Year[df.alpha$Year == 20] <- 2010
 df.alpha$Year[df.alpha$Year == 21] <- 2011
+
+#------------------------------------------------------------------------------------------
+# Subset alpha frame
+#------------------------------------------------------------------------------------------
+
+df.Andhra <- subset(df.alpha, State == "Andhra.Pradesh")
+df.Assam <- subset(df.alpha, State == "Assam")
+df.Bihar <- subset(df.alpha, State == "Bihar")
+df.Gujarat <- subset(df.alpha, State == "Gujarat")
+df.Haryana <- subset(df.alpha, State == "Haryana")
+df.Karnataka <- subset(df.alpha, State == "Karnataka")
+df.Kerala <- subset(df.alpha, State == "Kerala")
+df.Madhya <- subset(df.alpha, State == "Madhya.Pradesh")
+df.Maha <- subset(df.alpha, State == "Maharashtra")
+df.Odisha <- subset(df.alpha, State == "Odisha")
+df.Punjab <- subset(df.alpha, State == "Punjab")
+df.Raja <- subset(df.alpha, State == "Rajasthan")
+df.Tamil <- subset(df.alpha, State == "Tamil.Nadu")
+df.UP <- subset(df.alpha, State == "Uttar.Pradesh")
+df.WBengal <- subset(df.alpha, State == "West.Bengal")

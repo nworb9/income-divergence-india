@@ -12,18 +12,84 @@ ggplot(data = df.alpha, aes(x = Year, y = Average.GSDP.Growth, color = State)) +
         geom_line(aes(color = State), size = 1) +
         geom_point(aes(color = State), size = 1.3)
 
+unconditional.chart <- ggplot(data = df.alpha, 
+                              aes(x = Log.Initial.GSDP, y = Average.GSDP.Growth)) + 
+                        geom_point(size = 1.3) +
+                        geom_text(aes(label = State), size = 3) + 
+                        geom_smooth(method = "lm", color = "steelblue4") +
+                        labs(title = "Unconditional Convergence in India", 
+                             x = "Per Capita SDP (1991)", 
+                             y = "Average SDP Growth (1991-2011)")
+
+population.growth <- ggplot(df.alpha, aes(Average.Population.Growth, Average.GSDP.Growth)) +
+                        geom_point(size = 1.3) +
+                        geom_text(aes(label = State), size = 3) +
+                        geom_smooth(method = "lm", color = "steelblue4") +
+                        labs(title = "Population Growth vs. Income Growth",
+                             x = "Average Population Growth (1991-2011)",
+                             y = "Average SDP Growth (1991-2011)")
+
+social.growth <- ggplot(df.alpha, aes(Average.Social.Expenditure, Average.GSDP.Growth)) +
+                        geom_point(size = 1.3) +
+                        geom_text(aes(label = State), size = 3) +
+                        geom_smooth(method = "lm", color = "steelblue4") +
+                        labs(title = "Social Expenditure vs. Income Growth",
+                                x = "Average Social Expenditure (% of SDP) (1991-2011)",
+                                y = "Average SDP Growth (1991-2011)")
+
+fixed.capital.growth <- ggplot(df.alpha, aes(Average.Gross.Capital.Formation, Average.GSDP.Growth)) +
+                        geom_point(size = 1.3) +
+                        geom_text(aes(label = State), size = 3) +
+                        geom_smooth(method = "lm", color = "steelblue4") +
+                        labs(title = "Fixed Capital Formation vs. Income Growth",
+                                x = "Average Fixed Capital Formation (% of SDP) (1991-2011)",
+                                y = "Average SDP Growth (1991-2011)")
+
+loan.growth <- ggplot(df.alpha, aes(Average.Personal.Loans.by.SCBs, Average.GSDP.Growth)) +
+                        geom_point(size = 1.3) +
+                        geom_text(aes(label = State), size = 3) +
+                        geom_smooth(method = "lm", color = "steelblue4") +
+                        labs(title = "Personal Loans vs. Income Growth",
+                                x = "Average Personal Loans (% of SDP) (1991-2011)",
+                                y = "Average SDP Growth (1991-2011)")
+
+literacy.growth <- ggplot(df.alpha, aes(Average.Literacy.Rate, Average.GSDP.Growth)) +
+                        geom_point(size = 1.3) +
+                        geom_text(aes(label = State), size = 3) +
+                        geom_smooth(method = "lm", color = "steelblue4") +
+                        labs(title = "Literacy vs. Income Growth",
+                                x = "Average Literacy Rate (1991-2011)",
+                                y = "Average SDP Growth (1991-2011)")
+
+elec.growth <- ggplot(df.alpha, aes(Average.Elec.Cons, Average.GSDP.Growth)) +
+                        geom_point(size = 1.3) +
+                        geom_text(aes(label = State), size = 3) +
+                        geom_smooth(method = "lm", color = "steelblue4") +
+                        labs(title = "Per Capita Electricity Consumption vs. Income Growth",
+                                x = "Average Per Capita Electricity Consumption (1991-2011)",
+                                y = "Average SDP Growth (1991-2011)")
+
+imr.growth <- ggplot(df.alpha, aes(Average.Personal.Loans.by.SCBs, Average.GSDP.Growth)) +
+                        geom_point(size = 1.3) +
+                        geom_text(aes(label = State), size = 3) +
+                        geom_smooth(method = "lm", color = "steelblue4") +
+                        labs(title = "Personal Loans vs. Income Growth",
+                                x = "Average Personal Loans (% of SDP) (1991-2011)",
+                                y = "Average SDP Growth (1991-2011)")
+
+
 #------------------------------------------------------------------------------------------
 # Bump Chart
 #------------------------------------------------------------------------------------------
 
-ggplot(data = df.alpha, aes(x = Year, y = Income.Rank, color = State)) +
-        geom_line(aes(color = State), size = 2) +
-        geom_point(aes(color = State), size = 2.3) +
-        geom_point(color = "#FFFFFF", alpha = .8, size = .3) +
-        labs(title = "Indian States ranked by\nincome per capita") +
-        labs(subtitle = "(Income per capita)") +
-        labs(x = "Year", y = "Rank") +
-        scale_y_continuous(trans = "reverse", breaks = unique(df.alpha$Income.Rank))
+better.bump <- ggplot(df.alpha, aes(Year, Income.Rank, color=State)) +
+        geom_line(size=1.7) +
+        geom_point(size=2.3) +
+        geom_point(color="white", alpha=.8, size=.3) +
+        ggtitle("Indian States ranked by\nincome per capita", subtitle="(Income per capita)") +
+        xlab("Year") +
+        ylab("Rank") +
+        scale_y_continuous(trans="reverse", breaks=unique(df.alpha$Income.Rank))
 
 #------------------------------------------------------------------------------------------
 #  Themes
@@ -69,17 +135,12 @@ ggplot(data = df.alpha, aes(x = Year, y = Population.Growth)) +
         theme.smallmult
 
 #------------------------------------------------------------------------------------------
-#  Brew Colors
-#------------------------------------------------------------------------------------------
-
-# work in progress...
-
-#------------------------------------------------------------------------------------------
 #  Panel Scatterplot
 #------------------------------------------------------------------------------------------
 
 scatterplot(GSDP.per.capita ~ Year|State, boxplots = F, smooth = T, reg.line = F, data = df.alpha)
 scatterplot(GSDP.Growth ~ Year|State, boxplots = F, smooth = T, reg.line = F, data = df.alpha)
+
 #------------------------------------------------------------------------------------------
 #  Correlation Plot
 #------------------------------------------------------------------------------------------
