@@ -21,7 +21,8 @@ isInstalled <- function(mypkg){
 packages <- c("sp", "sandwich", "gplots", "zoo", "plm", "car", "ggplot2",
               "plyr", "rgeos", "sqldf", "RColorBrewer", "dplyr", "dtplyr",
               "data.table", "corrplot", "tseries", "lmtest", "psych", "stargazer",
-              "Hmisc", "raster",  "urca", "nlme", "robust", "sjstats")
+              "Hmisc", "raster",  "urca", "nlme", "robust", "sjstats", "ggrepel",
+              "gridExtra", "tables", "xlsx", "directlabels")
 checkAndDownload(packages)
 
 

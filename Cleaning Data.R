@@ -219,13 +219,20 @@ df.alpha <- df.alpha %>%
         mutate(Average.Literacy.Rate = mean(Literacy.Rate, na.rm = T)) %>%
         mutate(Average.Elec.Cons = mean(Per.Capita.Elec.Cons, na.rm = T)) %>%
         mutate(Average.IMR = mean(Infant.Mortality.Rate, na.rm = T)) %>%
-        mutate(Average.Ag.Share = mean(Percentage.Ag.Share.GDP, na.rm = T))
+        mutate(Average.Ag.Share = mean(Percentage.Ag.Share.GDP, na.rm = T)) %>%
+        mutate(Average.GSDP.Level = mean(GSDP.per.capita, na.rm = T))
 
 #------------------------------------------------------------------------------------------
 #  Lagged GDSP per capita
 #------------------------------------------------------------------------------------------
 
 df.alpha$Lagged.Log.GSDP.per.capita <- lag(df.alpha$Log.GSDP.per.capita, k = 1)
+
+#------------------------------------------------------------------------------------------
+# Real GSDP per capita
+#------------------------------------------------------------------------------------------
+
+df.alpha$Income.per.capita <- (df.alpha$GSDP.per.capita)*100000
 
 #------------------------------------------------------------------------------------------
 # Change Years
@@ -251,6 +258,12 @@ df.alpha$Year[df.alpha$Year == 18] <- 2008
 df.alpha$Year[df.alpha$Year == 19] <- 2009
 df.alpha$Year[df.alpha$Year == 20] <- 2010
 df.alpha$Year[df.alpha$Year == 21] <- 2011
+
+#------------------------------------------------------------------------------------------
+# Convert lakh rupees to rupees
+#------------------------------------------------------------------------------------------
+
+df.alpha$GSDP.per.capita <- df.alpha$GSDP.per.capita * 100000
 
 #------------------------------------------------------------------------------------------
 # Subset alpha frame
