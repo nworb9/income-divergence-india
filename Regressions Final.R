@@ -294,6 +294,7 @@ summary(gls.f.t)
 
 shapiro.test(gls.f.t$residuals)
 
+
 #==========================================================================================
 # Testing for cross-sectional dependence/contemporaneous correlation: using
 # Breusch-Pagan LM test of independence and Pasaran CD test
